@@ -1,0 +1,136 @@
+library(dplyr)
+library(ggplot2)
+#loading the data
+df=read.csv('/home/ash/Downloads/qcparameters.csv')
+cols= colnames(df)
+
+##### uniformity, uniquebase, mean target depth #############
+
+for (j in 2:4){
+  col= df[,j]
+  qual=c()
+  dec= quantile(df[,j], probs = seq(.1, .9, by = .1))
+  for (k in 1:length(col)){
+    
+    para= col[k]
+    
+    good= dec[[8]]
+    bad= dec[[2]]
+    
+    if (para<bad){
+      qual= append(qual, "bad")
+    } else if ( para>good) {
+      qual= append(qual, "good")
+    } else {
+      qual= append(qual, "intermediate")
+    }
+    
+    
+  }
+  df= cbind(df, qual)
+  names(df)[ncol(df)]=paste("qual", strsplit(cols[j],'[.]')[[1]][1])
+  
+  
+}
+df$sno= seq(1:nrow(df))
+
+################## Plotting ######################
+
+
+### Unique base enrichment ###########
+
+df$Unique.base.enrichment
+dec= quantile(df$Unique.base.enrichment, probs = seq(.1, .9, by = .1))
+
+ggplot(df, aes(x=Unique.base.enrichment, y=sno, color=`qual Unique`)) +
+  geom_point()+
+  geom_rug()+
+  ggtitle(label = "Unique.base.enrichment (20% and 80%)")+
+  xlab("Unique.base.enrichment")+
+  ylab("Uniformity of coverage")+
+  geom_vline(xintercept=dec[[8]], color='darkgreen', size=0.5)+
+  geom_vline(xintercept=dec[[2]], color='darkred', size=0.5)+
+  labs(color = "Quality")+
+  coord_flip()
+
+
+### Mean Target Depth ###########
+
+df$`qual Mean`
+dec= quantile(df$Mean.target.coverage.depth, probs = seq(.1, .9, by = .1))
+
+ggplot(df, aes(x=Mean.target.coverage.depth, y=sno, color=`qual Mean`)) +
+  geom_point()+
+  geom_rug()+
+  ggtitle(label = "Mean.target.coverage.depth (20% and 80%)")+
+  xlab("Samples")+
+  ylab("Mean.target.coverage.depth")+
+  geom_vline(xintercept=dec[[8]], color='darkgreen', size=0.5)+
+  geom_vline(xintercept=dec[[2]], color='darkred', size=0.5)+
+  labs(color = "Quality")+
+  coord_flip()
+
+
+### Uniformity ###########
+
+df$`qual Uniformity`
+dec= quantile(df$Uniformity.of.coverage..Pct...0.2.mean., probs = seq(.1, .9, by = .1))
+
+ggplot(df, aes(x=Uniformity.of.coverage..Pct...0.2.mean., y=sno, color=`qual Uniformity`)) +
+  geom_point()+
+  geom_rug()+
+  ggtitle(label = "Uniformity of coverage (20% and 80%)")+
+  xlab("Samples")+
+  ylab("Uniformity of coverage")+
+  geom_vline(xintercept=dec[[8]], color='darkgreen', size=0.5)+
+  geom_vline(xintercept=dec[[2]], color='darkred', size=0.5)+
+  labs(color = "Quality")+
+  coord_flip()
+
+
+######################## Duplicate #####################
+
+j=5
+
+col= df[,j]
+qual=c()
+dec= quantile(df[,j], probs = seq(.1, .9, by = .1))
+for (k in 1:length(col)){
+  
+  para= col[k]
+  
+  bad= dec[[8]]
+  good= dec[[2]]
+  
+  if (para>bad){
+    qual= append(qual, "bad")
+  } else if ( para<good) {
+    qual= append(qual, "good")
+  } else {
+    qual= append(qual, "intermediate")
+  }
+  
+  
+}
+df= cbind(df, qual)
+names(df)[ncol(df)]=paste("qual", strsplit(cols[j],'[.]')[[1]][1])
+
+write.csv(df, "/home/ash/Downloads/qc2080.csv")
+### Plotting duplicate ######
+
+df$`qual Percent`
+dec= quantile(df$Percent.duplicate.aligned.reads, probs = seq(.1, .9, by = .1))
+
+ggplot(df, aes(x=Percent.duplicate.aligned.reads, y=sno, color=`qual Percent`)) +
+  geom_point()+
+  geom_rug()+
+  ggtitle(label = "Percent.duplicate.aligned.reads (20% and 80%)")+
+  xlab("Samples")+
+  ylab("Percent.duplicate.aligned.reads")+
+  geom_vline(xintercept=dec[[2]], color='darkgreen', size=0.5)+
+  geom_vline(xintercept=dec[[8]], color='darkred', size=0.5)+
+  labs(color = "Quality")+
+  coord_flip()
+
+
+
