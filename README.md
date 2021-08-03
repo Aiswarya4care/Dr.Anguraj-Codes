@@ -2,5 +2,5 @@
 All the codes used for generating graphs and other data generated for discussions with Dr.Anguraj
 
 <h2> Previous Codes details <br/> </h2>
-![previous code details](/images/p-codes.png) <br/>
+![previous code details](/images/p-codes.png?raw=true) <br/>
 ![image](/images/targetdepth1090.png)
