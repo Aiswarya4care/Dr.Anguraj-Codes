@@ -3,4 +3,4 @@ All the codes used for generating graphs and other data generated for discussion
 
 <h2> Previous Codes details <br/> </h2>
 
-<img src="/images/p-codes.png" width="220" height="240" />
+<img src="/images/p-codes.png" width="90%" />
